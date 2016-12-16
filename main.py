@@ -3,6 +3,13 @@ import re
 from config import *
 from locationslist import states
 
+reply_intro = """
+It appears you forgot to include your location in the title or body of your post.\n
+Please update the original post to include this information.\n
+Do NOT delete this post - Instead, simply edit the post with the requested information..\n
+___\n
+"""
+
 
 def main():
     reddit = praw.Reddit(user_agent = USER_AGENT,
@@ -27,7 +34,9 @@ def process_submission (submission):
     elif any (state in body_contents for state in states):
         print ("Location Found")
     else:
-        print ("Nothing Here")
+        reply_text = reply_intro + "Original Author: " + submission.author.name + "\n" + submission.title + "\n" + ">" + submission.selftext
+        submission.reply(reply_text)
+
 
 if __name__ == '__main__':
     main()
